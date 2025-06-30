@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paddy Leaf Disease Detection</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container mt-4">
+        <h1 class="text-center mb-5 animate__animated animate__fadeIn">Paddy Leaf Disease Detection</h1>
+
+        <div class="card mb-4 animate__animated animate__fadeInUp" id="upload-section">
+            <div class="card-body">
+                <h5 class="card-title">Upload Image</h5>
+                <form id="uploadForm" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="file" class="form-label">Select Leaf Image</label>
+                        <input type="file" class="form-control" id="file" name="file" accept=".jpg,.jpeg,.png" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Analyze Image</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="loader" class="d-none text-center mb-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p>Analyzing your image...</p>
+        </div>
+
+        {% if error %}
+        <div class="alert alert-danger animate__animated animate__shakeX mb-4" role="alert">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        {% if result %}
+        <div class="card mb-4 animate__animated animate__fadeInUp" id="results-section">
+            <div class="card-body">
+                <h5 class="card-title">Prediction Results</h5>
+                {% if result.disease.lower() == 'normal' %}
+                <p class="card-text text-success"><strong>{{ result.message }}</strong></p>
+                <p class="card-text"><strong>Predicted Disease:</strong> {{ result.disease }}</p>
+                <p class="card-text"><strong>Severity:</strong> {{ result.severity }}</p>
+                {% else %}
+                <p class="card-text"><strong>Predicted Disease:</strong> {{ result.disease }}</p>
+                <p class="card-text"><strong>Severity:</strong> {{ result.severity }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card mb-4 animate__animated animate__fadeInUp" id="images-section">
+            <div class="card-body">
+                <h5 class="card-title">Analysis Images</h5>
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-4 mb-3 d-flex justify-content-center animate__animated animate__zoomIn">
+                        <div class="text-center">
+                            <h6>Original Image</h6>
+                            <img src="{{ result.original_image }}" class="img-fluid rounded" alt="Original Image"
+                                style="max-width: 250px;">
+                        </div>
+                    </div>
+                    {% if result.disease_affected_area %}
+                    <div class="col-12 col-md-4 mb-3 d-flex justify-content-center animate__animated animate__zoomIn">
+                        <div class="text-center">
+                            <h6>Disease Affected Area</h6>
+                            <img src="{{ result.disease_affected_area }}" class="img-fluid rounded"
+                                alt="Disease Affected Area" style="max-width: 250px;">
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function () {
+            document.getElementById('loader').classList.remove('d-none');
+        });
+    </script>
+</body>
+
+</html>
